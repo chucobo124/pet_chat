@@ -1,21 +1,36 @@
-'use strict';
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-const express = require('express');
-const http = require('http').Server(express);
-const io = require('socket.io')(http);
-// Constants
-const PORT = 8080;
-const HOST = '0.0.0.0';
-
-// App
-const app = express();
-app.get('/', (req, res) => {
+app.get('/', function (req, res) {
+    // channel = req.query.channel
+    // io.of('/' + channel).on('connection', function (socket) {
+    //     socket.on(channel, function (data) {
+    //         io.emit(channel, data);
+    //         console.log(data);
+    //     });
+    // });
     res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function (socket) {
-    console.log('a user connected');
+    socket.emit('news', { hello: 'world' });
+    socket.on('chat message', function (msg) {
+        io.emit('chat message', msg);
+        console.log('socket:' + socket)
+        console.log('message: ' + msg);
+    });
 });
 
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+// io.on('connection', function (socket) {
+//     socket.emit('news', { hello: 'world' });
+//     socket.on('my other event', function (data) {
+//         io.emit('my other event', data);
+//         console.log(data);
+//     });
+// });
+
+http.listen(3000, function () {
+    console.log('listening on *:3000');
+});
+
