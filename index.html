@@ -60,15 +60,11 @@
                 var string = reg.exec(href);
                 return string ? string[1] : null;
             };
-            var socket = io('http://localhost:8080')
+            var socket = io('http://localhost:8080/?token=abc')
             
-            socket.on("connection", function(socket){
-                socket.io.opts.query
-                let token = socket.handshake.query.token;
-            })
             $('form').submit(function () {
                 // socket.emit('chat message', $('#m').val());
-                socket.emit("chat message", $('#m').val());
+                socket.emit("chat message", $('#m').val(), "otherdata");
                 $('#m').val('');
                 return false;
             });
