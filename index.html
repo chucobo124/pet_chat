@@ -60,15 +60,16 @@
                 var string = reg.exec(href);
                 return string ? string[1] : null;
             };
-            var socket = io('http://localhost:8080/?token=abc')
+            var token = getQueryString('token')
+            var connectedUser = getQueryString('connectedUser')
+            var socket = io('http://localhost:8080/?token='+ token + '&connectedUser=' +  connectedUser)
             
             $('form').submit(function () {
-                // socket.emit('chat message', $('#m').val());
-                socket.emit("chat message", $('#m').val(), "otherdata");
+                socket.emit(token, $('#m').val(), connectedUser);
                 $('#m').val('');
                 return false;
             });
-            socket.on("chat message", function (msg) {
+            socket.on(token, function (msg) {
                 $('#messages').append($('<li>').text(msg));
             });
         });
